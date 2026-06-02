@@ -1,0 +1,463 @@
+<!-- v2 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermit Island Family Camp 2026 — Coordination List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --forest: #1a3a2a; --forest-mid: #2d5a40; --forest-lt: #4a7c59;
+    --sage: #7ec89b; --sage-lt: #b2dfc0; --cream: #faf8f3;
+    --parchment: #f0ede5; --parchment2: #e5e0d5; --bark: #2c2a24;
+    --bark-mid: #5a5750; --bark-lt: #9a9790; --border: #ddd9cf;
+    --border-lt: #ece8e0; --white: #ffffff; --warn: #c0392b;
+    --warn-lt: #fdecea;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--cream); color: var(--bark); min-height: 100vh; font-size: 16px; line-height: 1.5; }
+  .site-header { background: var(--forest); color: #e8f0e9; padding: 2.5rem 2rem 2rem; text-align: center; position: relative; overflow: hidden; }
+  .site-header::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 80px); pointer-events: none; }
+  .header-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+  .site-header h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: #d4edda; letter-spacing: 0.02em; margin-bottom: 0.25rem; }
+  .header-sub { font-size: 1rem; color: var(--sage-lt); font-family: 'Playfair Display', serif; font-style: italic; margin-bottom: 1.25rem; }
+  .mission-box { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); border-radius: 10px; padding: 1.1rem 1.4rem; max-width: 720px; margin: 0 auto; font-size: 0.93rem; line-height: 1.65; color: #c0d8c8; text-align: left; }
+  .mission-box strong { color: var(--sage); }
+  .instructions { background: #e6f4ea; border-left: 4px solid var(--forest-lt); padding: 0.9rem 1.5rem; margin: 1.25rem auto; border-radius: 0 8px 8px 0; font-size: 0.88rem; line-height: 1.65; color: #1e3d28; max-width: 860px; }
+  .stats-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 0.8rem 1.5rem; background: var(--parchment); border-bottom: 1px solid var(--border); max-width: 900px; margin: 0 auto; }
+  .stat-pill { background: var(--forest); color: #d4edda; border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; font-family: 'Courier New', monospace; font-weight: bold; white-space: nowrap; }
+  .stat-pill span { color: var(--sage); }
+  .bar-actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn-pdf, .btn-refresh { border: none; border-radius: 6px; padding: 6px 16px; font-size: 0.83rem; cursor: pointer; font-family: 'Source Sans 3', sans-serif; font-weight: 600; transition: background 0.15s; white-space: nowrap; }
+  .btn-pdf { background: var(--forest-lt); color: white; }
+  .btn-pdf:hover { background: var(--forest-mid); }
+  .btn-refresh { background: var(--parchment2); color: var(--bark); border: 1px solid var(--border); }
+  .btn-refresh:hover { background: var(--border); }
+  .main { padding: 1.25rem 1.5rem 4rem; max-width: 900px; margin: 0 auto; }
+  .category { background: var(--white); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 1.25rem; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,0.05); }
+  .cat-header { display: flex; align-items: center; gap: 10px; padding: 0.85rem 1.25rem; cursor: pointer; user-select: none; background: var(--parchment); border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .cat-header:hover { background: var(--parchment2); }
+  .cat-emoji { font-size: 1.25rem; flex-shrink: 0; }
+  .cat-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--forest); flex: 1; }
+  .cat-badge { font-size: 0.76rem; color: var(--bark-mid); background: var(--parchment2); border-radius: 12px; padding: 2px 10px; font-family: 'Courier New', monospace; border: 1px solid var(--border); white-space: nowrap; }
+  .cat-badge.has-items { background: #e6f4ea; color: var(--forest-mid); border-color: var(--sage-lt); }
+  .chevron { color: var(--bark-lt); font-size: 0.9rem; transition: transform 0.2s; flex-shrink: 0; }
+  .chevron.open { transform: rotate(180deg); }
+  .cat-body { display: none; }
+  .cat-body.open { display: block; }
+  .item-row { border-bottom: 1px solid var(--border-lt); }
+  .item-row:last-of-type { border-bottom: none; }
+  .item-main { padding: 0.6rem 1.25rem 0.55rem; }
+  .item-name { font-size: 0.93rem; font-weight: 600; color: var(--bark); margin-bottom: 5px; }
+  .commitments-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .commit-tag { display: inline-flex; align-items: center; gap: 5px; background: #e6f4ea; border: 1px solid var(--sage-lt); border-radius: 14px; padding: 3px 8px 3px 10px; font-size: 0.78rem; color: #1e4d2d; animation: tagPop 0.18s ease; }
+  @keyframes tagPop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .commit-name { font-weight: 700; }
+  .commit-note { color: #3a7a50; font-style: italic; }
+  .remove-btn { background: none; border: none; cursor: pointer; color: var(--bark-lt); font-size: 0.85rem; padding: 0; line-height: 1; margin-left: 1px; transition: color 0.1s; }
+  .remove-btn:hover { color: var(--warn); }
+  .add-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: 1px dashed var(--forest-lt); border-radius: 14px; padding: 3px 11px; font-size: 0.78rem; color: var(--forest-lt); cursor: pointer; font-family: 'Source Sans 3', sans-serif; transition: background 0.15s, color 0.15s; }
+  .add-btn:hover { background: #e6f4ea; color: var(--forest); }
+  .commit-panel { display: none; background: var(--parchment); border-top: 1px solid var(--border-lt); padding: 0.8rem 1.25rem; }
+  .commit-panel.open { display: block; }
+  .panel-title { font-size: 0.82rem; font-weight: 600; color: var(--forest); margin-bottom: 0.6rem; }
+  .commit-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+  .form-group { display: flex; flex-direction: column; gap: 3px; }
+  .form-group label { font-size: 0.74rem; color: var(--bark-mid); font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; }
+  select, input[type="text"] { border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 0.85rem; font-family: 'Source Sans 3', sans-serif; background: var(--white); color: var(--bark); transition: border-color 0.15s; }
+  select:focus, input[type="text"]:focus { outline: none; border-color: var(--forest-lt); box-shadow: 0 0 0 2px rgba(74,124,89,0.15); }
+  select { min-width: 170px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5750' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+  input.note-input { width: 220px; }
+  input.custom-name { width: 150px; }
+  .custom-name-wrap { display: none; }
+  .btn-save { background: var(--forest-lt); color: white; border: none; border-radius: 6px; padding: 6px 16px; font-size: 0.84rem; font-weight: 600; cursor: pointer; font-family: 'Source Sans 3', sans-serif; transition: background 0.15s; align-self: flex-end; }
+  .btn-save:hover { background: var(--forest-mid); }
+  .btn-cancel { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-size: 0.84rem; cursor: pointer; color: var(--bark-mid); font-family: 'Source Sans 3', sans-serif; transition: background 0.15s; align-self: flex-end; }
+  .btn-cancel:hover { background: var(--parchment2); }
+  .add-item-row { display: flex; gap: 8px; padding: 0.55rem 1.25rem; border-top: 1px dashed var(--border); background: #fafaf6; align-items: center; }
+  .add-item-row input { flex: 1; font-size: 0.83rem; padding: 5px 9px; }
+  .btn-add-item { background: var(--forest); color: #d4edda; border: none; border-radius: 6px; padding: 5px 12px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Source Sans 3', sans-serif; white-space: nowrap; transition: background 0.15s; }
+  .btn-add-item:hover { background: var(--forest-mid); }
+  .toast { position: fixed; bottom: 20px; right: 20px; background: var(--forest); color: var(--sage); font-size: 0.82rem; padding: 8px 16px; border-radius: 20px; opacity: 0; transform: translateY(8px); transition: opacity 0.3s, transform 0.3s; pointer-events: none; font-family: 'Courier New', monospace; z-index: 9999; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .loading-overlay { text-align: center; padding: 3rem; color: var(--bark-mid); font-style: italic; font-size: 0.95rem; }
+  .error-msg { background: var(--warn-lt); border: 1px solid #e8b4b0; border-radius: 8px; padding: 1rem 1.25rem; color: var(--warn); font-size: 0.88rem; margin: 1rem 0; }
+  @media (max-width: 600px) { .site-header { padding: 1.75rem 1rem 1.5rem; } .main { padding: 1rem 0.75rem 3rem; } .instructions { margin: 1rem 0.75rem; } .stats-bar { padding: 0.75rem; } input.note-input { width: 160px; } input.custom-name { width: 130px; } }
+  @media print { .add-btn, .remove-btn, .add-item-row, .btn-pdf, .btn-refresh, .commit-panel, .toast, .instructions { display: none !important; } .cat-body { display: block !important; } .category { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; } body { background: white; font-size: 12px; } .site-header { background: #1a3a2a !important; -webkit-print-color-adjust: exact; } }
+</style>
+</head>
+<body>
+
+<script>
+  const JSONBIN_KEY = '$2a$10$qvlxLJxESVVQnZ2bihs7zulUQC3O9EN1x3J/yGhd6a31Dk2a5viKm';
+  const JSONBIN_BIN_ID_KEY = 'hermit-island-2026-bin-id';
+</script>
+
+<header class="site-header">
+  <span class="header-icon">🏕️</span>
+  <h1>Hermit Island Family Camp — August 2026</h1>
+  <p class="header-sub">The Official "Please, No More Ketchup" Coordination Plan</p>
+  <div class="mission-box">
+    <strong>Okay, real talk.</strong> Last year we collectively arrived with <strong>nine bottles of ketchup</strong>, four containers of paprika nobody asked for, and a grand total of zero mustard. Not one squeeze bottle. Someone drove 20 minutes for mayo. This year we are <em>coordinating</em>. Find your items below, click <strong>"+ I'm bringing this"</strong>, and commit. Multiple people can claim the same item — great for things every site needs. Funny notes are not only allowed, they are strongly encouraged. 🦞
+  </div>
+</header>
+
+<div class="instructions">
+  📋 <strong>How to use:</strong> Click <strong>"+ I'm bringing this"</strong> on any item → pick your name from the dropdown (or type a new one) → add a note if you want → hit <strong>Save</strong>. Hit <strong>Refresh List</strong> anytime to see what others have added. Remove your commitment by clicking the ✕ on your tag.
+</div>
+
+<div class="stats-bar">
+  <div class="stat-pill">Items: <span id="stat-total">—</span></div>
+  <div class="stat-pill">Covered: <span id="stat-covered">—</span></div>
+  <div class="stat-pill">Commitments: <span id="stat-commits">—</span></div>
+  <div class="bar-actions">
+    <button class="btn-refresh" onclick="loadData()">↻ Refresh List</button>
+    <button class="btn-pdf" onclick="downloadPDF()">⬇ Download PDF</button>
+  </div>
+</div>
+
+<main class="main" id="main-content">
+  <div class="loading-overlay">Loading the list… 🏕️</div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const NAMES = [
+  { label: '— Select your name —', value: '' },
+  { label: 'Lauren', value: 'Lauren' }, { label: 'Jeff', value: 'Jeff' },
+  { label: 'Henry', value: 'Henry' }, { label: 'Tilly', value: 'Tilly' },
+  { label: 'Tim', value: 'Tim' }, { label: 'Kathy', value: 'Kathy' },
+  { label: 'Cat', value: 'Cat' }, { label: 'Meghan', value: 'Meghan' },
+  { label: 'Becky', value: 'Becky' }, { label: 'Brian', value: 'Brian' },
+  { label: 'Ava Anderson', value: 'Ava Anderson' }, { label: 'Devon Anderson', value: 'Devon Anderson' },
+  { label: 'Jenna', value: 'Jenna' }, { label: 'Matt', value: 'Matt' },
+  { label: 'Brynn', value: 'Brynn' }, { label: 'Joe', value: 'Joe' },
+  { label: 'Evy', value: 'Evy' }, { label: 'Morgan', value: 'Morgan' },
+  { label: '✏ Someone else (type below)…', value: '__custom__' },
+];
+
+const CATEGORIES = [
+  { id:'breakfast', emoji:'🍳', title:'Breakfast Items', items:['Eggs (from home)','Bacon','Sausage','English Muffins','Oatmeal','Cereal','Milk (plastic container)','Pancake Mix (just add water)','Syrup (from home)','Honey','Coffee','Tea','Cream / Half & Half','Butter (for breakfast)','Spices & seasonings','Veggies for eggs','Potatoes / hash browns','Fruit (bananas, apples, berries)','Granola'] },
+  { id:'lunch', emoji:'🥪', title:'Lunch Items', items:['Sandwich / Hoagie rolls','Lunchmeat (turkey, ham, roast beef)','Cheese (sliced)','Hellman\'s Mayo','Mustard (yes, we NEED mustard this year)','Ketchup (ONE bottle per site — that\'s it)','Tuna','Pickles','Romaine lettuce','Tomatoes','Protein Bars','Wraps / Tortillas','Peanut butter & jelly','Chips for sandwiches'] },
+  { id:'dinner', emoji:'🥩', title:'Dinner Items', items:['Steak','Chicken','Hamburger meat','Hot dogs','Buns (burger & hot dog)','LOBSTER (obviously)','Veggies for grilling','Potatoes','Olive oil','Lemons','Garlic','Pasta & sauce','Sausages for campfire','Corn on the cob','Butter (dinner supply)','Salt & pepper'] },
+  { id:'condiments', emoji:'🫙', title:'Condiments & Pantry', items:['Ketchup (1 bottle MAX per site — see above)','Mustard','Mayo','Hot sauce','BBQ sauce','Relish','Olive oil','Salt & pepper','Garlic powder','Paprika (ONE container — seriously)','Soy sauce','Worcestershire','Salad dressing(s)','Ranch dip','Hummus'] },
+  { id:'snacks', emoji:'🍿', title:'Snacks', items:['Pretzels & dip','Chips & salsa','Marshmallows','Chocolate bars (s\'mores)','Graham crackers','Salted peanuts in shell','Jiffy Pop popcorn','Mixed nuts','Granola bars','Dried fruit','Crackers & cheese','Cookies','Trail mix'] },
+  { id:'beverages', emoji:'🍷', title:'Beverages', items:['Wine','Seltzer / sparkling water','Beer','Non-alcoholic beer','Soda (Coke, Diet, etc.)','Water cases','Juice(s)','Mixers (OJ, tonic, etc.)','Alcohol of choice','Iced tea','Lemonade mix','Sports drinks','Coffee creamer','Hot cocoa mix'] },
+  { id:'shelter', emoji:'⛺', title:'Shelter & Setup', items:['Pop-up camper','Tent','Extra tent for storage','Screen house','Tarps and LOTS of rope','Four-step aluminum ladder','Rubber mallet','Car/boat battery jump-starter','Outdoor carpet / mat','Solar lights for outside','Ratchet straps'] },
+  { id:'cooking', emoji:'🍲', title:'Cooking & Food Storage', items:['Large frying pan','Small frying pan','Lobster / cooking pots','Coffee pot / percolator','Propane cans for stove','Propane stove','Large propane tank','Strainer for pasta','Strikers to light fire & stoves','Large serving spoons','Sharp knives','Large water container','Coffee mugs','Plastic containers / Ziplock bags','Paper towels','Disposable bowls & plates','Plastic forks & spoons','Plastic cups','Aluminum foil','Napkins','Large cutting board','Tongs, spatula, veggie peeler','Mixing bowls','Measuring cups','Water bottles','Marshmallow sticks / forks','Trash bags','Thermos','Coolers (large & small)','Small beach cooler'] },
+  { id:'setup', emoji:'🧹', title:'Setup & Cleaning', items:['Campers kitchen table','Folding shovel','Whisk broom & dustpan','Sierra saw','Hammer / hatchet','Utility ropes','Dish pan and strainer','Dish detergent','S-hooks (to hang things)','Sponge','Hot mitts','Dish towels','Tablecloth','Laundry detergent (small)','Clothespins & clothesline','Clips for opened bags','Lysol spray & hand wipes','Rubber bands'] },
+  { id:'sleeping', emoji:'😴', title:'Sleeping Gear', items:['Sleeping bags','Sheets for camper','Blow-up mattress','Mattress pads','Pillows','Fleece bag liner(s)','Blankets','Cots'] },
+  { id:'fishing', emoji:'🎣', title:'Fishing Gear', items:['Fishing poles','Tackle box','Gaff','Fish net','Pliers','Line glow sticks','Filet knife set','Beach rod holders','Five-gallon bucket','Fish ruler','Fish scale','Fish scaling board','Marine antenna for radio','Backpack for boat','Large Ziplock bags for fish'] },
+  { id:'clothing', emoji:'👕', title:'Clothing Reminders', items:['Bath towels (2 per person)','Beach towels (2 per person)','Personal clothing','Bathing suits','Sweatshirts & light jackets','Rain gear, umbrellas & raincoat','Sneakers or hikers','Flip flops for shower','Sunglasses','Hats'] },
+  { id:'misc', emoji:'🎲', title:'Miscellaneous & Fun', items:['Quahog float & onion bags','Air pump & batteries','Hammocks & ropes','Walkie talkies & charger','Bikes, helmets & chain oil','Folding chairs for campsite','Beach chairs','Flashlights & batteries','Cards','Pad of paper & pens','Books for reading','Beach umbrella','Beach mats','Volleyball, Frisbee, kite & string','Mask, snorkel & flippers','Poker set','Binoculars','Golf clubs','Porta Potty / Luggable Loo','TP & wipes','Wooden matches'] },
+  { id:'health', emoji:'🩹', title:'Health & Safety', items:['Personal bath items','First aid kit','Aloe vera','Suntan lotion & sunblock','Visine eye drops','Peroxide','Isopropyl alcohol','Essential oils','Bug spray','Citronella candles & incense','Solar charger','Headlamps & light caps','Earplugs','Bug zappers','Flyswatter','Cell phones & chargers','Gorilla glue','Scissors','Box of tissues'] },
+];
+
+// ── STATE ───────────────────────────────────────────────────
+let appData = { commitments: [], customItems: [] };
+let binId = null;
+let openCats = {};
+let activePanel = null;
+let saveTimer = null;
+
+['breakfast','lunch','dinner','condiments','snacks','beverages'].forEach(id => openCats[id] = true);
+
+// ── JSONBIN HELPERS ─────────────────────────────────────────
+const JB_BASE = 'https://api.jsonbin.io/v3';
+const JB_HEADERS = {
+  'Content-Type': 'application/json',
+  'X-Master-Key': JSONBIN_KEY,
+  'X-Bin-Private': 'false'
+};
+
+async function loadData() {
+  showToast('↻ Loading…');
+  try {
+    // Check if we have a saved bin ID
+    binId = localStorage.getItem(JSONBIN_BIN_ID_KEY);
+    if (binId) {
+      const res = await fetch(`${JB_BASE}/b/${binId}/latest`, { headers: JB_HEADERS });
+      if (res.ok) {
+        const json = await res.json();
+        appData = json.record || { commitments: [], customItems: [] };
+        render();
+        showToast('✓ List refreshed');
+        return;
+      }
+    }
+    // No bin yet — create one
+    const res = await fetch(`${JB_BASE}/b`, {
+      method: 'POST',
+      headers: { ...JB_HEADERS, 'X-Bin-Name': 'Hermit Island 2026' },
+      body: JSON.stringify({ commitments: [], customItems: [] })
+    });
+    const json = await res.json();
+    binId = json.metadata.id;
+    localStorage.setItem(JSONBIN_BIN_ID_KEY, binId);
+    appData = { commitments: [], customItems: [] };
+    render();
+    showToast('✓ List ready!');
+  } catch(e) {
+    showError('Could not connect to storage. Check your internet connection. ' + e.message);
+  }
+}
+
+async function saveData() {
+  if (!binId) return;
+  try {
+    await fetch(`${JB_BASE}/b/${binId}`, {
+      method: 'PUT',
+      headers: JB_HEADERS,
+      body: JSON.stringify(appData)
+    });
+    showToast('✓ Saved!');
+  } catch(e) {
+    showToast('⚠ Save failed — try again');
+  }
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveData, 600);
+}
+
+// ── COMMIT ACTIONS ──────────────────────────────────────────
+function addCommit(catId, itemName, personName, note) {
+  const exists = appData.commitments.find(c => c.catId === catId && c.itemName === itemName && c.personName === personName);
+  if (exists) { alert(personName + ' has already committed to this item!'); return; }
+  appData.commitments.push({ id: Date.now(), catId, itemName, personName, note: note || '' });
+  activePanel = null;
+  scheduleSave();
+  render();
+}
+
+function removeCommit(id) {
+  appData.commitments = appData.commitments.filter(c => c.id !== id);
+  scheduleSave();
+  render();
+}
+
+function addCustomItem(catId, itemName) {
+  const already = appData.customItems.find(c => c.catId === catId && c.itemName === itemName);
+  if (already) return;
+  appData.customItems.push({ catId, itemName });
+  scheduleSave();
+  render();
+}
+
+// ── UI HELPERS ──────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function showError(msg) {
+  document.getElementById('main-content').innerHTML = '<div class="error-msg">⚠️ ' + esc(msg) + '</div>';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function toggleCat(id) { openCats[id] = !openCats[id]; render(); }
+
+function openPanel(catId, itemName) {
+  activePanel = { catId, itemName };
+  render();
+  setTimeout(() => {
+    const el = document.getElementById('sel-' + CSS.escape(catId + '::' + itemName));
+    if (el) el.focus();
+  }, 30);
+}
+
+function closePanel() { activePanel = null; render(); }
+
+function onSelectChange(key) {
+  const sel = document.getElementById('sel-' + CSS.escape(key));
+  const wrap = document.getElementById('cwrap-' + CSS.escape(key));
+  if (sel && wrap) wrap.style.display = sel.value === '__custom__' ? 'flex' : 'none';
+}
+
+function doSave(catId, itemName) {
+  const key = catId + '::' + itemName;
+  const sel = document.getElementById('sel-' + CSS.escape(key));
+  const cinp = document.getElementById('cinp-' + CSS.escape(key));
+  const ninp = document.getElementById('ninp-' + CSS.escape(key));
+  let name = sel ? sel.value : '';
+  if (name === '__custom__') name = cinp ? cinp.value.trim() : '';
+  if (!name) { alert('Please select or enter your name!'); return; }
+  const note = ninp ? ninp.value.trim() : '';
+  addCommit(catId, itemName, name, note);
+}
+
+function doAddItem(catId) {
+  const inp = document.getElementById('newinp-' + catId);
+  const val = inp ? inp.value.trim() : '';
+  if (!val) return;
+  inp.value = '';
+  addCustomItem(catId, val);
+}
+
+// ── STATS ───────────────────────────────────────────────────
+function updateStats() {
+  let total = 0, covered = 0;
+  CATEGORIES.forEach(cat => {
+    const extras = appData.customItems.filter(c => c.catId === cat.id).map(c => c.itemName);
+    const all = [...cat.items, ...extras];
+    all.forEach(item => {
+      total++;
+      if (appData.commitments.some(c => c.catId === cat.id && c.itemName === item)) covered++;
+    });
+  });
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-covered').textContent = covered;
+  document.getElementById('stat-commits').textContent = appData.commitments.length;
+}
+
+// ── RENDER ──────────────────────────────────────────────────
+function render() {
+  const container = document.getElementById('main-content');
+  let html = '';
+  CATEGORIES.forEach(cat => {
+    const extras = appData.customItems.filter(c => c.catId === cat.id).map(c => c.itemName);
+    const allItems = [...cat.items, ...extras];
+    const isOpen = openCats[cat.id] === true;
+    const covered = allItems.filter(item => appData.commitments.some(c => c.catId === cat.id && c.itemName === item)).length;
+
+    html += `<div class="category">
+      <div class="cat-header" onclick="toggleCat('${cat.id}')">
+        <span class="cat-emoji">${cat.emoji}</span>
+        <span class="cat-title">${cat.title}</span>
+        <span class="cat-badge ${covered > 0 ? 'has-items' : ''}">${covered}/${allItems.length} covered</span>
+        <span class="chevron ${isOpen ? 'open' : ''}">▾</span>
+      </div>
+      <div class="cat-body ${isOpen ? 'open' : ''}">`;
+
+    allItems.forEach(item => {
+      const key = cat.id + '::' + item;
+      const eKey = CSS.escape(key);
+      const coms = appData.commitments.filter(c => c.catId === cat.id && c.itemName === item);
+      const isPanelOpen = activePanel && activePanel.catId === cat.id && activePanel.itemName === item;
+
+      let tags = coms.map(c => `<span class="commit-tag">
+        <span class="commit-name">${esc(c.personName)}</span>
+        ${c.note ? `<span class="commit-note">— ${esc(c.note)}</span>` : ''}
+        <button class="remove-btn" onclick="removeCommit(${c.id})" title="Remove">✕</button>
+      </span>`).join('');
+
+      const addBtnHtml = !isPanelOpen ? `<button class="add-btn" onclick="openPanel('${esc(cat.id)}',${JSON.stringify(item)})">+ I'm bringing this</button>` : '';
+
+      const selectOpts = NAMES.map(n => `<option value="${esc(n.value)}">${esc(n.label)}</option>`).join('');
+
+      const panelHtml = isPanelOpen ? `
+        <div class="commit-panel open">
+          <div class="panel-title">Who's bringing <em>${esc(item)}</em>?</div>
+          <div class="commit-form">
+            <div class="form-group">
+              <label>Your name</label>
+              <select id="sel-${eKey}" onchange="onSelectChange('${esc(key)}')">${selectOpts}</select>
+            </div>
+            <div class="form-group custom-name-wrap" id="cwrap-${eKey}" style="display:none">
+              <label>Enter name</label>
+              <input class="custom-name" id="cinp-${eKey}" type="text" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label>Note (optional)</label>
+              <input class="note-input" id="ninp-${eKey}" type="text" placeholder="e.g. Bringing 2, full propane tank">
+            </div>
+            <button class="btn-save" onclick="doSave('${esc(cat.id)}',${JSON.stringify(item)})">Save</button>
+            <button class="btn-cancel" onclick="closePanel()">Cancel</button>
+          </div>
+        </div>` : '';
+
+      html += `<div class="item-row">
+        <div class="item-main">
+          <div class="item-name">${esc(item)}</div>
+          <div class="commitments-wrap">${tags}${addBtnHtml}</div>
+        </div>
+        ${panelHtml}
+      </div>`;
+    });
+
+    html += `<div class="add-item-row">
+        <input type="text" id="newinp-${cat.id}" placeholder="Add an item to this category…" onkeydown="if(event.key==='Enter') doAddItem('${cat.id}')">
+        <button class="btn-add-item" onclick="doAddItem('${cat.id}')">+ Add item</button>
+      </div></div></div>`;
+  });
+  container.innerHTML = html;
+  updateStats();
+}
+
+// ── PDF ─────────────────────────────────────────────────────
+function downloadPDF() {
+  if (!window.jspdf) {
+    const s1 = document.createElement('script');
+    s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s1.onload = () => {
+      const s2 = document.createElement('script');
+      s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+      s2.onload = () => downloadPDF();
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+    showToast('Loading PDF engine…');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+  const forestGreen = [26, 58, 42];
+  const darkText = [44, 42, 36];
+  doc.setFillColor(...forestGreen);
+  doc.rect(0, 0, 216, 38, 'F');
+  doc.setTextColor(126, 200, 155);
+  doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+  doc.text('Hermit Island Family Camp - August 2026', 108, 14, { align: 'center' });
+  doc.setFontSize(10); doc.setFont('helvetica', 'italic');
+  doc.setTextColor(200, 220, 205);
+  doc.text('The Official "Please, No More Ketchup" Coordination Plan', 108, 22, { align: 'center' });
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(180, 205, 188);
+  doc.text('Generated ' + new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }), 108, 30, { align: 'center' });
+  let y = 45;
+  CATEGORIES.forEach(cat => {
+    const extras = appData.customItems.filter(c => c.catId === cat.id).map(c => c.itemName);
+    const allItems = [...cat.items, ...extras];
+    if (y > 240) { doc.addPage(); y = 15; }
+    doc.setFillColor(...forestGreen);
+    doc.roundedRect(10, y, 196, 8, 2, 2, 'F');
+    doc.setTextColor(212, 237, 218); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.text(cat.title, 14, y + 5.5);
+    y += 11;
+    const tableData = allItems.map(item => {
+      const coms = appData.commitments.filter(c => c.catId === cat.id && c.itemName === item);
+      const whoStr = coms.length === 0 ? '—' : coms.map(c => c.note ? c.personName + ' (' + c.note + ')' : c.personName).join('\n');
+      return [item, whoStr];
+    });
+    doc.autoTable({
+      startY: y, head: [['Item', "Who's Bringing It"]], body: tableData, theme: 'grid',
+      styles: { fontSize: 8, cellPadding: 2.5, textColor: darkText, lineColor: [220, 215, 205], lineWidth: 0.3 },
+      headStyles: { fillColor: [230, 244, 234], textColor: [30, 77, 45], fontStyle: 'bold', fontSize: 8 },
+      columnStyles: { 0: { cellWidth: 90 }, 1: { cellWidth: 106 } },
+      alternateRowStyles: { fillColor: [250, 248, 243] }, margin: { left: 10, right: 10 },
+    });
+    y = doc.lastAutoTable.finalY + 6;
+  });
+  doc.save('Hermit-Island-2026-Camping-Plan.pdf');
+  showToast('✓ PDF downloaded!');
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
