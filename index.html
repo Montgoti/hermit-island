@@ -1,4 +1,3 @@
-<!-- v2 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,17 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
-
-
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --forest: #1a3a2a; --forest-mid: #2d5a40; --forest-lt: #4a7c59;
+    --forest: #070707; --forest-mid: #2d5a40; --forest-lt: #4a7c59;
     --sage: #7ec89b; --sage-lt: #b2dfc0; --cream: #faf8f3;
     --parchment: #f0ede5; --parchment2: #e5e0d5; --bark: #2c2a24;
     --bark-mid: #5a5750; --bark-lt: #9a9790; --border: #ddd9cf;
-    --border-lt: #ece8e0; --white: #ffffff; --warn: #c0392b;
-    --warn-lt: #fdecea;
+    --border-lt: #ece8e0; --white: #ffffff; --warn: #c0392b; --warn-lt: #fdecea;
   }
   html { scroll-behavior: smooth; }
   body { font-family: 'Source Sans 3', sans-serif; background: var(--cream); color: var(--bark); min-height: 100vh; font-size: 16px; line-height: 1.5; }
@@ -94,11 +90,6 @@
 </head>
 <body>
 
-<script>
-  const JSONBIN_KEY = '$2a$10$qvlxLJxESVVQnZ2bihs7zulUQC3O9EN1x3J/yGhd6a31Dk2a5viKm';
-  const JSONBIN_BIN_ID_KEY = 'hermit-island-2026-bin-id';
-</script>
-
 <header class="site-header">
   <span class="header-icon">🏕️</span>
   <h1>Hermit Island Family Camp — August 2026</h1>
@@ -129,6 +120,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
+const API = '/.netlify/functions/data';
+
 const NAMES = [
   { label: '— Select your name —', value: '' },
   { label: 'Lauren', value: 'Lauren' }, { label: 'Jeff', value: 'Jeff' },
@@ -136,7 +129,8 @@ const NAMES = [
   { label: 'Tim', value: 'Tim' }, { label: 'Kathy', value: 'Kathy' },
   { label: 'Cat', value: 'Cat' }, { label: 'Meghan', value: 'Meghan' },
   { label: 'Becky', value: 'Becky' }, { label: 'Brian', value: 'Brian' },
-  { label: 'Ava Anderson', value: 'Ava Anderson' }, { label: 'Devon Anderson', value: 'Devon Anderson' },
+  { label: 'Ava Anderson', value: 'Ava Anderson' },
+  { label: 'Devon Anderson', value: 'Devon Anderson' },
   { label: 'Jenna', value: 'Jenna' }, { label: 'Matt', value: 'Matt' },
   { label: 'Brynn', value: 'Brynn' }, { label: 'Joe', value: 'Joe' },
   { label: 'Evy', value: 'Evy' }, { label: 'Morgan', value: 'Morgan' },
@@ -160,109 +154,71 @@ const CATEGORIES = [
   { id:'health', emoji:'🩹', title:'Health & Safety', items:['Personal bath items','First aid kit','Aloe vera','Suntan lotion & sunblock','Visine eye drops','Peroxide','Isopropyl alcohol','Essential oils','Bug spray','Citronella candles & incense','Solar charger','Headlamps & light caps','Earplugs','Bug zappers','Flyswatter','Cell phones & chargers','Gorilla glue','Scissors','Box of tissues'] },
 ];
 
-// ── STATE ───────────────────────────────────────────────────
 let appData = { commitments: [], customItems: [] };
-let binId = null;
 let openCats = {};
 let activePanel = null;
-let saveTimer = null;
 
 ['breakfast','lunch','dinner','condiments','snacks','beverages'].forEach(id => openCats[id] = true);
 
-// ── JSONBIN HELPERS ─────────────────────────────────────────
-const JB_BASE = 'https://api.jsonbin.io/v3';
-const JB_HEADERS = {
-  'Content-Type': 'application/json',
-  'X-Master-Key': JSONBIN_KEY,
-  'X-Bin-Private': 'false'
-};
+async function api(method, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API, opts);
+  if (!res.ok) throw new Error('Server error ' + res.status);
+  return res.json();
+}
 
 async function loadData() {
   showToast('↻ Loading…');
   try {
-    // Check if we have a saved bin ID
-    binId = localStorage.getItem(JSONBIN_BIN_ID_KEY);
-    if (binId) {
-      const res = await fetch(`${JB_BASE}/b/${binId}/latest`, { headers: JB_HEADERS });
-      if (res.ok) {
-        const json = await res.json();
-        appData = json.record || { commitments: [], customItems: [] };
-        render();
-        showToast('✓ List refreshed');
-        return;
-      }
-    }
-    // No bin yet — create one
-    const res = await fetch(`${JB_BASE}/b`, {
-      method: 'POST',
-      headers: { ...JB_HEADERS, 'X-Bin-Name': 'Hermit Island 2026' },
-      body: JSON.stringify({ commitments: [], customItems: [] })
-    });
-    const json = await res.json();
-    binId = json.metadata.id;
-    localStorage.setItem(JSONBIN_BIN_ID_KEY, binId);
-    appData = { commitments: [], customItems: [] };
+    appData = await api('GET');
     render();
-    showToast('✓ List ready!');
+    showToast('✓ List refreshed');
   } catch(e) {
-    showError('Could not connect to storage. Check your internet connection. ' + e.message);
+    showError('Could not load data: ' + e.message);
   }
 }
 
-async function saveData() {
-  if (!binId) return;
-  try {
-    await fetch(`${JB_BASE}/b/${binId}`, {
-      method: 'PUT',
-      headers: JB_HEADERS,
-      body: JSON.stringify(appData)
-    });
-    showToast('✓ Saved!');
-  } catch(e) {
-    showToast('⚠ Save failed — try again');
-  }
-}
-
-function scheduleSave() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveData, 600);
-}
-
-// ── COMMIT ACTIONS ──────────────────────────────────────────
-function addCommit(catId, itemName, personName, note) {
-  const exists = appData.commitments.find(c => c.catId === catId && c.itemName === itemName && c.personName === personName);
+async function addCommit(catId, itemName, personName, note) {
+  const exists = appData.commitments.find(
+    c => c.catId === catId && c.itemName === itemName && c.personName === personName
+  );
   if (exists) { alert(personName + ' has already committed to this item!'); return; }
-  appData.commitments.push({ id: Date.now(), catId, itemName, personName, note: note || '' });
-  activePanel = null;
-  scheduleSave();
-  render();
+  try {
+    appData = await api('POST', { action: 'addCommit', catId, itemName, personName, note });
+    activePanel = null;
+    render();
+    showToast('✓ Saved!');
+  } catch(e) { alert('Could not save: ' + e.message); }
 }
 
-function removeCommit(id) {
-  appData.commitments = appData.commitments.filter(c => c.id !== id);
-  scheduleSave();
-  render();
+async function removeCommit(id) {
+  try {
+    appData = await api('POST', { action: 'removeCommit', id });
+    render();
+    showToast('✓ Removed');
+  } catch(e) { alert('Could not remove: ' + e.message); }
 }
 
-function addCustomItem(catId, itemName) {
-  const already = appData.customItems.find(c => c.catId === catId && c.itemName === itemName);
-  if (already) return;
-  appData.customItems.push({ catId, itemName });
-  scheduleSave();
-  render();
+async function addCustomItem(catId, itemName) {
+  try {
+    appData = await api('POST', { action: 'addCustomItem', catId, itemName });
+    render();
+    showToast('✓ Item added');
+  } catch(e) { alert('Could not add item: ' + e.message); }
 }
 
-// ── UI HELPERS ──────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
 function showError(msg) {
-  document.getElementById('main-content').innerHTML = '<div class="error-msg">⚠️ ' + esc(msg) + '</div>';
+  document.getElementById('main-content').innerHTML =
+    '<div class="error-msg">⚠️ ' + esc(msg) + '</div>';
 }
 
 function esc(s) {
@@ -296,8 +252,7 @@ function doSave(catId, itemName) {
   let name = sel ? sel.value : '';
   if (name === '__custom__') name = cinp ? cinp.value.trim() : '';
   if (!name) { alert('Please select or enter your name!'); return; }
-  const note = ninp ? ninp.value.trim() : '';
-  addCommit(catId, itemName, name, note);
+  addCommit(catId, itemName, name, ninp ? ninp.value.trim() : '');
 }
 
 function doAddItem(catId) {
@@ -308,13 +263,11 @@ function doAddItem(catId) {
   addCustomItem(catId, val);
 }
 
-// ── STATS ───────────────────────────────────────────────────
 function updateStats() {
   let total = 0, covered = 0;
   CATEGORIES.forEach(cat => {
     const extras = appData.customItems.filter(c => c.catId === cat.id).map(c => c.itemName);
-    const all = [...cat.items, ...extras];
-    all.forEach(item => {
+    [...cat.items, ...extras].forEach(item => {
       total++;
       if (appData.commitments.some(c => c.catId === cat.id && c.itemName === item)) covered++;
     });
@@ -324,7 +277,6 @@ function updateStats() {
   document.getElementById('stat-commits').textContent = appData.commitments.length;
 }
 
-// ── RENDER ──────────────────────────────────────────────────
 function render() {
   const container = document.getElementById('main-content');
   let html = '';
@@ -332,92 +284,94 @@ function render() {
     const extras = appData.customItems.filter(c => c.catId === cat.id).map(c => c.itemName);
     const allItems = [...cat.items, ...extras];
     const isOpen = openCats[cat.id] === true;
-    const covered = allItems.filter(item => appData.commitments.some(c => c.catId === cat.id && c.itemName === item)).length;
+    const covered = allItems.filter(item =>
+      appData.commitments.some(c => c.catId === cat.id && c.itemName === item)
+    ).length;
 
-    html += `<div class="category">
-      <div class="cat-header" onclick="toggleCat('${cat.id}')">
-        <span class="cat-emoji">${cat.emoji}</span>
-        <span class="cat-title">${cat.title}</span>
-        <span class="cat-badge ${covered > 0 ? 'has-items' : ''}">${covered}/${allItems.length} covered</span>
-        <span class="chevron ${isOpen ? 'open' : ''}">▾</span>
-      </div>
-      <div class="cat-body ${isOpen ? 'open' : ''}">`;
+    html += '<div class="category">';
+    html += '<div class="cat-header" onclick="toggleCat(\'' + cat.id + '\')">';
+    html += '<span class="cat-emoji">' + cat.emoji + '</span>';
+    html += '<span class="cat-title">' + cat.title + '</span>';
+    html += '<span class="cat-badge' + (covered > 0 ? ' has-items' : '') + '">' + covered + '/' + allItems.length + ' covered</span>';
+    html += '<span class="chevron' + (isOpen ? ' open' : '') + '">▾</span>';
+    html += '</div>';
+    html += '<div class="cat-body' + (isOpen ? ' open' : '') + '">';
 
-    allItems.forEach(item => {
-      const key = cat.id + '::' + item;
-      const eKey = CSS.escape(key);
-      const coms = appData.commitments.filter(c => c.catId === cat.id && c.itemName === item);
-      const isPanelOpen = activePanel && activePanel.catId === cat.id && activePanel.itemName === item;
+    allItems.forEach(function(item) {
+      var key = cat.id + '::' + item;
+      var eKey = CSS.escape(key);
+      var coms = appData.commitments.filter(function(c) { return c.catId === cat.id && c.itemName === item; });
+      var isPanelOpen = activePanel && activePanel.catId === cat.id && activePanel.itemName === item;
 
-      let tags = coms.map(c => `<span class="commit-tag">
-        <span class="commit-name">${esc(c.personName)}</span>
-        ${c.note ? `<span class="commit-note">— ${esc(c.note)}</span>` : ''}
-        <button class="remove-btn" onclick="removeCommit(${c.id})" title="Remove">✕</button>
-      </span>`).join('');
+      html += '<div class="item-row"><div class="item-main">';
+      html += '<div class="item-name">' + esc(item) + '</div>';
+      html += '<div class="commitments-wrap">';
 
-      const addBtnHtml = !isPanelOpen ? `<button class="add-btn" onclick="openPanel('${esc(cat.id)}',${JSON.stringify(item)})">+ I'm bringing this</button>` : '';
+      coms.forEach(function(c) {
+        html += '<span class="commit-tag">';
+        html += '<span class="commit-name">' + esc(c.personName) + '</span>';
+        if (c.note) html += '<span class="commit-note">— ' + esc(c.note) + '</span>';
+        html += '<button class="remove-btn" onclick="removeCommit(' + c.id + ')" title="Remove">✕</button>';
+        html += '</span>';
+      });
 
-      const selectOpts = NAMES.map(n => `<option value="${esc(n.value)}">${esc(n.label)}</option>`).join('');
+      if (!isPanelOpen) {
+        html += '<button class="add-btn" onclick="openPanel(\'' + esc(cat.id) + '\',' + JSON.stringify(item) + ')">+ I\'m bringing this</button>';
+      }
 
-      const panelHtml = isPanelOpen ? `
-        <div class="commit-panel open">
-          <div class="panel-title">Who's bringing <em>${esc(item)}</em>?</div>
-          <div class="commit-form">
-            <div class="form-group">
-              <label>Your name</label>
-              <select id="sel-${eKey}" onchange="onSelectChange('${esc(key)}')">${selectOpts}</select>
-            </div>
-            <div class="form-group custom-name-wrap" id="cwrap-${eKey}" style="display:none">
-              <label>Enter name</label>
-              <input class="custom-name" id="cinp-${eKey}" type="text" placeholder="Your name">
-            </div>
-            <div class="form-group">
-              <label>Note (optional)</label>
-              <input class="note-input" id="ninp-${eKey}" type="text" placeholder="e.g. Bringing 2, full propane tank">
-            </div>
-            <button class="btn-save" onclick="doSave('${esc(cat.id)}',${JSON.stringify(item)})">Save</button>
-            <button class="btn-cancel" onclick="closePanel()">Cancel</button>
-          </div>
-        </div>` : '';
+      html += '</div></div>';
 
-      html += `<div class="item-row">
-        <div class="item-main">
-          <div class="item-name">${esc(item)}</div>
-          <div class="commitments-wrap">${tags}${addBtnHtml}</div>
-        </div>
-        ${panelHtml}
-      </div>`;
+      if (isPanelOpen) {
+        var selectOpts = NAMES.map(function(n) {
+          return '<option value="' + esc(n.value) + '">' + esc(n.label) + '</option>';
+        }).join('');
+
+        html += '<div class="commit-panel open">';
+        html += '<div class="panel-title">Who\'s bringing <em>' + esc(item) + '</em>?</div>';
+        html += '<div class="commit-form">';
+        html += '<div class="form-group"><label>Your name</label>';
+        html += '<select id="sel-' + eKey + '" onchange="onSelectChange(\'' + esc(key) + '\')">' + selectOpts + '</select></div>';
+        html += '<div class="form-group custom-name-wrap" id="cwrap-' + eKey + '" style="display:none">';
+        html += '<label>Enter name</label><input class="custom-name" id="cinp-' + eKey + '" type="text" placeholder="Your name"></div>';
+        html += '<div class="form-group"><label>Note (optional)</label>';
+        html += '<input class="note-input" id="ninp-' + eKey + '" type="text" placeholder="e.g. Bringing 2, full tank"></div>';
+        html += '<button class="btn-save" onclick="doSave(\'' + esc(cat.id) + '\',' + JSON.stringify(item) + ')">Save</button>';
+        html += '<button class="btn-cancel" onclick="closePanel()">Cancel</button>';
+        html += '</div></div>';
+      }
+
+      html += '</div>';
     });
 
-    html += `<div class="add-item-row">
-        <input type="text" id="newinp-${cat.id}" placeholder="Add an item to this category…" onkeydown="if(event.key==='Enter') doAddItem('${cat.id}')">
-        <button class="btn-add-item" onclick="doAddItem('${cat.id}')">+ Add item</button>
-      </div></div></div>`;
+    html += '<div class="add-item-row">';
+    html += '<input type="text" id="newinp-' + cat.id + '" placeholder="Add an item to this category…" onkeydown="if(event.key===\'Enter\') doAddItem(\'' + cat.id + '\')">';
+    html += '<button class="btn-add-item" onclick="doAddItem(\'' + cat.id + '\')">+ Add item</button>';
+    html += '</div></div></div>';
   });
+
   container.innerHTML = html;
   updateStats();
 }
 
-// ── PDF ─────────────────────────────────────────────────────
 function downloadPDF() {
   if (!window.jspdf) {
-    const s1 = document.createElement('script');
+    showToast('Loading PDF engine…');
+    var s1 = document.createElement('script');
     s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    s1.onload = () => {
-      const s2 = document.createElement('script');
+    s1.onload = function() {
+      var s2 = document.createElement('script');
       s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
-      s2.onload = () => downloadPDF();
+      s2.onload = function() { downloadPDF(); };
       document.head.appendChild(s2);
     };
     document.head.appendChild(s1);
-    showToast('Loading PDF engine…');
     return;
   }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-  const forestGreen = [26, 58, 42];
-  const darkText = [44, 42, 36];
-  doc.setFillColor(...forestGreen);
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+  var forestGreen = [26, 58, 42];
+  var darkText = [44, 42, 36];
+  doc.setFillColor(26, 58, 42);
   doc.rect(0, 0, 216, 38, 'F');
   doc.setTextColor(126, 200, 155);
   doc.setFontSize(18); doc.setFont('helvetica', 'bold');
@@ -428,19 +382,19 @@ function downloadPDF() {
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
   doc.setTextColor(180, 205, 188);
   doc.text('Generated ' + new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }), 108, 30, { align: 'center' });
-  let y = 45;
-  CATEGORIES.forEach(cat => {
-    const extras = appData.customItems.filter(c => c.catId === cat.id).map(c => c.itemName);
-    const allItems = [...cat.items, ...extras];
+  var y = 45;
+  CATEGORIES.forEach(function(cat) {
+    var extras = appData.customItems.filter(function(c) { return c.catId === cat.id; }).map(function(c) { return c.itemName; });
+    var allItems = cat.items.concat(extras);
     if (y > 240) { doc.addPage(); y = 15; }
-    doc.setFillColor(...forestGreen);
+    doc.setFillColor(26, 58, 42);
     doc.roundedRect(10, y, 196, 8, 2, 2, 'F');
     doc.setTextColor(212, 237, 218); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
     doc.text(cat.title, 14, y + 5.5);
     y += 11;
-    const tableData = allItems.map(item => {
-      const coms = appData.commitments.filter(c => c.catId === cat.id && c.itemName === item);
-      const whoStr = coms.length === 0 ? '—' : coms.map(c => c.note ? c.personName + ' (' + c.note + ')' : c.personName).join('\n');
+    var tableData = allItems.map(function(item) {
+      var coms = appData.commitments.filter(function(c) { return c.catId === cat.id && c.itemName === item; });
+      var whoStr = coms.length === 0 ? '—' : coms.map(function(c) { return c.note ? c.personName + ' (' + c.note + ')' : c.personName; }).join('\n');
       return [item, whoStr];
     });
     doc.autoTable({
@@ -456,7 +410,6 @@ function downloadPDF() {
   showToast('✓ PDF downloaded!');
 }
 
-// ── INIT ─────────────────────────────────────────────────────
 loadData();
 </script>
 </body>
