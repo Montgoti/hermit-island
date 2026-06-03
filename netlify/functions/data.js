@@ -1,74 +1,47 @@
-cat << 'EOF'
-exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
+const https = require('https');
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
+const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN;
+const BASE_ID = 'appJOvEYol0RsHWZT';
+const COMMITMENTS_TABLE = 'Commitments';
+const CUSTOM_ITEMS_TABLE = 'CustomItems';
 
-  try {
-    const { getStore } = require('@netlify/blobs');
-
-    const store = getStore({
-      name: 'hermit-island',
-      siteID: process.env.SITE_ID,
-      token: process.env.NETLIFY_AUTH_TOKEN,
+function airtableRequest(method, path, body) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.airtable.com',
+      path: `/v0/${BASE_ID}/${path}`,
+      method,
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+        'Content-Type': 'application/json',
+      }
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
+        catch(e) { resolve({ status: res.statusCode, body: data }); }
+      });
     });
+    req.on('error', reject);
+    if (body) req.write(JSON.stringify(body));
+    req.end();
+  });
+}
 
-    const key = 'appdata';
-
-    if (event.httpMethod === 'GET') {
-      let data = null;
-      try {
-        const raw = await store.get(key);
-        if (raw) data = JSON.parse(raw);
-      } catch(e) { console.log('GET blob error:', e.message); }
-      if (!data) {
-        data = { commitments: [], customItems: [] };
-        try { await store.set(key, JSON.stringify(data)); } catch(e) {}
-      }
-      return { statusCode: 200, headers, body: JSON.stringify(data) };
-    }
-
-    if (event.httpMethod === 'POST') {
-      const body = JSON.parse(event.body);
-      let data = null;
-      try {
-        const raw = await store.get(key);
-        if (raw) data = JSON.parse(raw);
-      } catch(e) {}
-      if (!data) data = { commitments: [], customItems: [] };
-
-      if (body.action === 'addCommit') {
-        if (!data.commitments.find(c => c.catId === body.catId && c.itemName === body.itemName && c.personName === body.personName)) {
-          data.commitments.push({ id: Date.now(), catId: body.catId, itemName: body.itemName, personName: body.personName, note: body.note || '' });
-        }
-      }
-      if (body.action === 'removeCommit') {
-        data.commitments = data.commitments.filter(c => c.id !== body.id);
-      }
-      if (body.action === 'addCustomItem') {
-        if (!data.customItems.find(c => c.catId === body.catId && c.itemName === body.itemName)) {
-          data.customItems.push({ catId: body.catId, itemName: body.itemName });
-        }
-      }
-      await store.set(key, JSON.stringify(data));
-      return { statusCode: 200, headers, body: JSON.stringify(data) };
-    }
-
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
-
-  } catch (error) {
-    console.error('ERROR:', error.name, error.message);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message, type: error.name }) };
-  }
-};
-EOF
-Output
+async function getAllRecords(table) {
+  let records = [], offset = null;
+  do {
+    const path = offset
+      ? `${encodeURIComponent(table)}?offset=${offset}`
+      : encodeURIComponent(table);
+    const res = await airtableRequest('GET', path, null);
+    if (res.body.records) records = records.concat(res.body.records);
+    offset = res.body.offset || null;
+  } while (offset);
+  return records;
+}
 
 exports.handler = async (event) => {
   const headers = {
@@ -82,60 +55,79 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { getStore } = require('@netlify/blobs');
-
-    const store = getStore({
-      name: 'hermit-island',
-      siteID: process.env.SITE_ID,
-      token: process.env.NETLIFY_AUTH_TOKEN,
-    });
-
-    const key = 'appdata';
-
     if (event.httpMethod === 'GET') {
-      let data = null;
-      try {
-        const raw = await store.get(key);
-        if (raw) data = JSON.parse(raw);
-      } catch(e) { console.log('GET blob error:', e.message); }
-      if (!data) {
-        data = { commitments: [], customItems: [] };
-        try { await store.set(key, JSON.stringify(data)); } catch(e) {}
-      }
-      return { statusCode: 200, headers, body: JSON.stringify(data) };
+      const [commitRecs, customRecs] = await Promise.all([
+        getAllRecords(COMMITMENTS_TABLE),
+        getAllRecords(CUSTOM_ITEMS_TABLE),
+      ]);
+      const commitments = commitRecs.map(r => ({
+        id: r.id,
+        catId: r.fields.catId || '',
+        itemName: r.fields.itemName || '',
+        personName: r.fields.personName || '',
+        note: r.fields.note || '',
+      }));
+      const customItems = customRecs.map(r => ({
+        id: r.id,
+        catId: r.fields.catId || '',
+        itemName: r.fields.itemName || '',
+      }));
+      return { statusCode: 200, headers, body: JSON.stringify({ commitments, customItems }) };
     }
 
     if (event.httpMethod === 'POST') {
       const body = JSON.parse(event.body);
-      let data = null;
-      try {
-        const raw = await store.get(key);
-        if (raw) data = JSON.parse(raw);
-      } catch(e) {}
-      if (!data) data = { commitments: [], customItems: [] };
 
       if (body.action === 'addCommit') {
-        if (!data.commitments.find(c => c.catId === body.catId && c.itemName === body.itemName && c.personName === body.personName)) {
-          data.commitments.push({ id: Date.now(), catId: body.catId, itemName: body.itemName, personName: body.personName, note: body.note || '' });
-        }
+        const res = await airtableRequest('POST', encodeURIComponent(COMMITMENTS_TABLE), {
+          records: [{ fields: {
+            catId: body.catId,
+            itemName: body.itemName,
+            personName: body.personName,
+            note: body.note || '',
+          }}]
+        });
+        if (res.status !== 200) throw new Error('Airtable error: ' + JSON.stringify(res.body));
       }
+
       if (body.action === 'removeCommit') {
-        data.commitments = data.commitments.filter(c => c.id !== body.id);
+        await airtableRequest('DELETE', `${encodeURIComponent(COMMITMENTS_TABLE)}/${body.id}`, null);
       }
+
       if (body.action === 'addCustomItem') {
-        if (!data.customItems.find(c => c.catId === body.catId && c.itemName === body.itemName)) {
-          data.customItems.push({ catId: body.catId, itemName: body.itemName });
-        }
+        const res = await airtableRequest('POST', encodeURIComponent(CUSTOM_ITEMS_TABLE), {
+          records: [{ fields: {
+            catId: body.catId,
+            itemName: body.itemName,
+          }}]
+        });
+        if (res.status !== 200) throw new Error('Airtable error: ' + JSON.stringify(res.body));
       }
-      await store.set(key, JSON.stringify(data));
-      return { statusCode: 200, headers, body: JSON.stringify(data) };
+
+      // Return fresh data after any write
+      const [commitRecs, customRecs] = await Promise.all([
+        getAllRecords(COMMITMENTS_TABLE),
+        getAllRecords(CUSTOM_ITEMS_TABLE),
+      ]);
+      const commitments = commitRecs.map(r => ({
+        id: r.id,
+        catId: r.fields.catId || '',
+        itemName: r.fields.itemName || '',
+        personName: r.fields.personName || '',
+        note: r.fields.note || '',
+      }));
+      const customItems = customRecs.map(r => ({
+        id: r.id,
+        catId: r.fields.catId || '',
+        itemName: r.fields.itemName || '',
+      }));
+      return { statusCode: 200, headers, body: JSON.stringify({ commitments, customItems }) };
     }
 
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   } catch (error) {
-    console.error('ERROR:', error.name, error.message);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message, type: error.name }) };
+    console.error('ERROR:', error.message);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   }
 };
-
