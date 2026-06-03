@@ -1,8 +1,5 @@
 {
   "name": "hermit-island-2026",
   "version": "1.0.0",
-  "description": "Hermit Island Family Camp 2026 Coordination List",
-  "dependencies": {
-    "@netlify/blobs": "^8.1.0"
-  }
+  "description": "Hermit Island Family Camp 2026 Coordination List"
 }
