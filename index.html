@@ -19,280 +19,95 @@
     --gold: #d4a017;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--cream);
-    font-family: 'Source Sans 3', sans-serif;
-    color: var(--forest);
-    min-height: 100vh;
-  }
+  body { background: var(--cream); font-family: 'Source Sans 3', sans-serif; color: var(--forest); min-height: 100vh; }
 
-  /* HEADER */
   header {
     background: var(--forest);
-    background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(61,107,61,0.6) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(107,143,78,0.3) 0%, transparent 50%);
-    padding: 2.5rem 1.5rem 2rem;
+    background-image: radial-gradient(ellipse at 20% 50%, rgba(61,107,61,0.6) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 20%, rgba(107,143,78,0.3) 0%, transparent 50%);
+    padding: 2.5rem 1.5rem 2.5rem;
     text-align: center;
     position: relative;
-    overflow: hidden;
   }
-  header::before {
+  header::after {
     content: '';
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 24px;
+    bottom: -20px; left: 0; right: 0;
+    height: 40px;
     background: var(--cream);
     clip-path: ellipse(55% 100% at 50% 100%);
+    z-index: 1;
   }
   .header-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 6vw, 3.2rem);
-    color: var(--sand);
-    letter-spacing: -0.5px;
-    line-height: 1.1;
-  }
-  header p {
-    color: rgba(245,230,200,0.75);
-    font-size: 1rem;
-    margin-top: 0.4rem;
-    font-weight: 300;
-  }
+  header h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.2rem); color: var(--sand); line-height: 1.1; }
+  header p { color: rgba(245,230,200,0.75); font-size: 1rem; margin-top: 0.4rem; font-weight: 300; }
 
-  /* MAIN */
-  main {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 2rem 1rem 4rem;
-  }
+  main { max-width: 680px; margin: 0 auto; padding: 3rem 1rem 4rem; }
 
-  /* STATUS BAR */
   #status-bar {
-    background: var(--forest);
-    color: var(--sand);
-    border-radius: 10px;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.85rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    min-height: 44px;
+    background: var(--forest); color: var(--sand); border-radius: 10px;
+    padding: 0.75rem 1.25rem; font-size: 0.85rem; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.6rem; min-height: 44px;
   }
   #status-bar.error { background: var(--ember); }
   #status-bar.success { background: var(--moss); }
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    flex-shrink: 0;
-  }
+  #status-bar.hidden { display: none; }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* CATEGORY */
-  .category {
-    margin-bottom: 2rem;
-  }
-  .category-header {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--smoke);
-  }
-  .category-icon { font-size: 1.3rem; }
-  .category-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    color: var(--pine);
-  }
-  .category-count {
-    margin-left: auto;
-    font-size: 0.8rem;
-    color: var(--moss);
-    font-weight: 600;
-    background: var(--smoke);
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-  }
+  .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: 0.82rem; color: #777; }
+  .legend-item { display: flex; align-items: center; gap: 0.3rem; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-dot.covered { background: var(--moss); }
+  .legend-dot.open { background: #ccc; }
 
-  /* ITEM CARD */
-  .item-card {
-    background: white;
-    border: 1.5px solid var(--smoke);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.6rem;
-    transition: box-shadow 0.2s, border-color 0.2s;
-  }
+  .category { margin-bottom: 2rem; }
+  .category-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--smoke); }
+  .category-icon { font-size: 1.3rem; }
+  .category-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--pine); }
+
+  .item-card { background: white; border: 1.5px solid var(--smoke); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 0.6rem; transition: box-shadow 0.2s, border-color 0.2s; }
   .item-card:hover { box-shadow: 0 4px 16px rgba(45,74,45,0.1); }
   .item-card.covered { border-color: var(--moss); background: #f4faf0; }
-  .item-card.covered .item-name { color: #555; }
 
-  .item-top {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  .item-name {
-    font-size: 1.05rem;
-    font-weight: 600;
-    flex: 1;
-    line-height: 1.3;
-  }
-  .item-needed {
-    font-size: 0.8rem;
-    color: var(--bark);
-    font-weight: 600;
-    white-space: nowrap;
-    margin-top: 2px;
-  }
-  .item-note {
-    font-size: 0.85rem;
-    color: #777;
-    margin-top: 0.3rem;
-    font-style: italic;
-  }
+  .item-name { font-size: 1.05rem; font-weight: 600; }
+  .item-note { font-size: 0.85rem; color: #777; margin-top: 0.2rem; font-style: italic; }
 
-  /* COMMITMENTS */
-  .commitments-list {
-    margin-top: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
+  .commitments-list { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .commitment-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--moss);
-    color: white;
-    border-radius: 20px;
-    padding: 0.3rem 0.75rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-    width: fit-content;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--moss); color: white; border-radius: 20px;
+    padding: 0.3rem 0.75rem; font-size: 0.82rem; font-weight: 600;
   }
-  .commitment-pill .qty { opacity: 0.85; font-weight: 400; }
+  .remove-btn { cursor: pointer; opacity: 0.7; font-size: 1rem; line-height: 1; background: none; border: none; color: white; padding: 0; }
+  .remove-btn:hover { opacity: 1; }
 
-  /* ADD BUTTON */
-  .add-btn {
-    margin-top: 0.75rem;
-    background: none;
-    border: 1.5px dashed var(--moss);
-    color: var(--pine);
-    padding: 0.45rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-family: 'Source Sans 3', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-    text-align: left;
-  }
+  .add-btn { margin-top: 0.75rem; background: none; border: 1.5px dashed var(--moss); color: var(--pine); padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.9rem; font-family: 'Source Sans 3', sans-serif; cursor: pointer; transition: all 0.2s; width: 100%; text-align: left; }
   .add-btn:hover { background: var(--smoke); border-style: solid; }
-  .add-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* FORM */
-  .commit-form {
-    margin-top: 0.75rem;
-    background: var(--smoke);
-    border-radius: 10px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  .commit-form input {
-    padding: 0.55rem 0.85rem;
-    border: 1.5px solid #ccc;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: 'Source Sans 3', sans-serif;
-    background: white;
-    color: var(--forest);
-    transition: border-color 0.2s;
-    width: 100%;
-  }
+  .commit-form { margin-top: 0.75rem; background: var(--smoke); border-radius: 10px; padding: 1rem; display: none; flex-direction: column; gap: 0.6rem; }
+  .commit-form.open { display: flex; }
+  .commit-form input { padding: 0.55rem 0.85rem; border: 1.5px solid #ccc; border-radius: 8px; font-size: 0.95rem; font-family: 'Source Sans 3', sans-serif; background: white; color: var(--forest); width: 100%; }
   .commit-form input:focus { outline: none; border-color: var(--pine); }
-  .form-row { display: flex; gap: 0.5rem; }
-  .form-row input { flex: 1; }
-  .submit-btn {
-    background: var(--pine);
-    color: white;
-    border: none;
-    padding: 0.55rem 1.25rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    white-space: nowrap;
-  }
+  .form-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .form-row input { flex: 1; min-width: 120px; }
+  .submit-btn { background: var(--pine); color: white; border: none; padding: 0.55rem 1.25rem; border-radius: 8px; font-size: 0.95rem; font-family: 'Source Sans 3', sans-serif; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .submit-btn:hover { background: var(--forest); }
   .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
-  .cancel-btn {
-    background: none;
-    border: 1px solid #aaa;
-    color: #666;
-    padding: 0.55rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-family: 'Source Sans 3', sans-serif;
-    cursor: pointer;
-  }
+  .cancel-btn { background: none; border: 1px solid #aaa; color: #666; padding: 0.55rem 1rem; border-radius: 8px; font-size: 0.9rem; font-family: 'Source Sans 3', sans-serif; cursor: pointer; }
   .cancel-btn:hover { background: white; }
 
-  /* CUSTOM ITEM */
-  #custom-section {
-    margin-top: 1rem;
-    padding-top: 1.5rem;
-    border-top: 2px dashed var(--smoke);
-  }
-  #custom-section h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--pine);
-    margin-bottom: 0.75rem;
-  }
-  #custom-form {
-    background: white;
-    border: 1.5px solid var(--smoke);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-  }
+  #custom-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px dashed var(--smoke); }
+  #custom-section h2 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--pine); margin-bottom: 0.75rem; }
+  #custom-form { background: white; border: 1.5px solid var(--smoke); border-radius: 12px; padding: 1rem 1.25rem; }
   #custom-form .form-row { flex-wrap: wrap; }
-  #custom-form input { flex: 1; min-width: 140px; }
+  #custom-form input { flex: 1; min-width: 140px; padding: 0.55rem 0.85rem; border: 1.5px solid #ccc; border-radius: 8px; font-size: 0.95rem; font-family: 'Source Sans 3', sans-serif; }
+  #custom-form input:focus { outline: none; border-color: var(--pine); }
 
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: #aaa;
-  }
-  .empty-state .icon { font-size: 3rem; margin-bottom: 0.5rem; }
-
-  /* LEGEND */
-  .legend {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-    font-size: 0.82rem;
-    color: #777;
-  }
-  .legend-item { display: flex; align-items: center; gap: 0.3rem; }
-  .legend-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-  }
-  .legend-dot.covered { background: var(--moss); }
-  .legend-dot.needed { background: var(--bark); }
-  .legend-dot.open { background: #ccc; }
+  .custom-items-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .custom-item-card { background: white; border: 1.5px solid var(--smoke); border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .custom-item-name { font-weight: 600; flex: 1; }
+  .custom-item-who { font-size: 0.85rem; color: var(--moss); }
 </style>
 </head>
 <body>
@@ -310,8 +125,7 @@
   </div>
 
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot covered"></div> Covered</div>
-    <div class="legend-item"><div class="legend-dot needed"></div> Needs more</div>
+    <div class="legend-item"><div class="legend-dot covered"></div> Someone's bringing it</div>
     <div class="legend-item"><div class="legend-dot open"></div> Nobody yet</div>
   </div>
 
@@ -323,43 +137,99 @@
       <div class="form-row">
         <input type="text" id="custom-item" placeholder="Item name (e.g. Bug spray, Cards)">
         <input type="text" id="custom-name" placeholder="Your name">
-        <input type="number" id="custom-qty" placeholder="Qty" min="1" style="max-width:80px">
       </div>
-      <div style="margin-top:0.5rem;display:flex;gap:0.5rem;">
-        <button class="submit-btn" onclick="submitCustom()">Add to list</button>
+      <div style="margin-top:0.5rem">
+        <button class="submit-btn" id="custom-submit-btn" onclick="submitCustom()">Add to list</button>
       </div>
     </div>
+    <div class="custom-items-list" id="custom-items-list"></div>
   </div>
 </main>
 
 <script>
-const API_BASE = '/.netlify/functions/data';
+// ─── ITEM CATALOG (hardcoded, matches catId used in Airtable) ─
+const CATALOG = [
+  {
+    category: 'Meals',
+    icon: '🍽️',
+    items: [
+      { id: 'breakfast-1', name: 'Eggs & bacon (Saturday breakfast)', note: 'For ~15 people' },
+      { id: 'breakfast-2', name: 'Pancake mix & syrup' },
+      { id: 'lunch-1',    name: 'Sandwich stuff (bread, deli meat, cheese)' },
+      { id: 'lunch-2',    name: 'Hot dogs & buns (Saturday lunch)' },
+      { id: 'dinner-1',   name: 'Burgers & buns (Saturday dinner)' },
+      { id: 'dinner-2',   name: 'Pasta & sauce (Friday dinner)' },
+    ]
+  },
+  {
+    category: 'Snacks',
+    icon: '🍿',
+    items: [
+      { id: 'snack-1', name: 'Chips & dip' },
+      { id: 'snack-2', name: 'Trail mix / nuts' },
+      { id: 'snack-3', name: 'S\'mores supplies (marshmallows, chocolate, graham crackers)' },
+      { id: 'snack-4', name: 'Fruit (apples, bananas, grapes)' },
+    ]
+  },
+  {
+    category: 'Drinks',
+    icon: '🧃',
+    items: [
+      { id: 'drink-1', name: 'Coffee & creamer' },
+      { id: 'drink-2', name: 'Juice boxes / drinks for kids' },
+      { id: 'drink-3', name: 'Soda / seltzers' },
+      { id: 'drink-4', name: 'Beer / wine (adults)' },
+      { id: 'drink-5', name: 'Water / ice' },
+    ]
+  },
+  {
+    category: 'Cooking & Supplies',
+    icon: '🔥',
+    items: [
+      { id: 'supply-1', name: 'Paper plates, cups, napkins' },
+      { id: 'supply-2', name: 'Utensils (forks, knives, spoons)' },
+      { id: 'supply-3', name: 'Aluminum foil & plastic wrap' },
+      { id: 'supply-4', name: 'Trash bags' },
+      { id: 'supply-5', name: 'Cooking oil / condiments (ketchup, mustard, mayo)' },
+    ]
+  },
+  {
+    category: 'Gear & Fun',
+    icon: '🎒',
+    items: [
+      { id: 'gear-1', name: 'Sunscreen & bug spray' },
+      { id: 'gear-2', name: 'Firewood' },
+      { id: 'gear-3', name: 'Camp chairs / blankets' },
+      { id: 'gear-4', name: 'Card games / board games' },
+      { id: 'gear-5', name: 'First aid kit' },
+    ]
+  },
+];
 
-let allData = { items: [], commitments: [], customItems: [] };
+// ─── STATE ────────────────────────────────────────────────────
+let commitments = [];   // [{ id, catId, itemName, personName, note }]
+let customItems = [];   // [{ id, catId, itemName }]
 
-// ─── STATUS BAR ──────────────────────────────────────────────
+// ─── STATUS ───────────────────────────────────────────────────
 function setStatus(msg, type = '') {
   const bar = document.getElementById('status-bar');
-  const txt = document.getElementById('status-text');
   bar.className = type;
-  const spinner = type === '' && msg.toLowerCase().includes('load')
-    ? '<div class="spinner"></div>' : '';
-  bar.innerHTML = spinner + `<span>${msg}</span>`;
+  if (type === 'hidden') { bar.className = 'hidden'; return; }
+  const spinner = (!type && msg.toLowerCase().includes('load')) ? '<div class="spinner"></div>' : '';
+  bar.innerHTML = `${spinner}<span>${msg}</span>`;
 }
 
-// ─── FETCH DATA ───────────────────────────────────────────────
+// ─── LOAD ─────────────────────────────────────────────────────
 async function loadData() {
   setStatus('Loading camp list…');
   try {
-    const res = await fetch(`${API_BASE}?action=getAll`);
+    const res = await fetch('/.netlify/functions/data');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    allData = data;
+    commitments = data.commitments || [];
+    customItems = data.customItems || [];
     render();
-    setStatus(`✅ Loaded — ${allData.items.length} items, ${allData.commitments.length + allData.customItems.length} commitments`, 'success');
-    setTimeout(() => {
-      document.getElementById('status-bar').style.display = 'none';
-    }, 2500);
+    setStatus('', 'hidden');
   } catch (e) {
     setStatus(`❌ Could not load data: ${e.message}`, 'error');
   }
@@ -368,205 +238,171 @@ async function loadData() {
 // ─── RENDER ───────────────────────────────────────────────────
 function render() {
   const container = document.getElementById('items-container');
-
-  // Group items by category
-  const categoryOrder = ['Meals', 'Snacks', 'Drinks', 'Cooking Supplies', 'Gear', 'Other'];
-  const byCategory = {};
-
-  for (const item of allData.items) {
-    const cat = item.category || 'Other';
-    if (!byCategory[cat]) byCategory[cat] = [];
-    byCategory[cat].push(item);
-  }
-
-  // Add custom items under their own "Community Additions" group
-  if (allData.customItems.length > 0) {
-    byCategory['Community Additions'] = allData.customItems.map(ci => ({
-      id: ci.id,
-      name: ci.item_name || ci.name,
-      category: 'Community Additions',
-      needed_qty: null,
-      note: `Added by ${ci.who_is_bringing}`,
-      isCustom: true,
-      customQty: ci.quantity
-    }));
-  }
-
-  const catIcons = {
-    'Meals': '🍽️', 'Snacks': '🍿', 'Drinks': '🧃',
-    'Cooking Supplies': '🔥', 'Gear': '🎒', 'Other': '📦',
-    'Community Additions': '⭐'
-  };
-
-  const orderedCats = [...categoryOrder, 'Community Additions'].filter(c => byCategory[c]);
-
   let html = '';
 
-  for (const cat of orderedCats) {
-    const items = byCategory[cat];
-    if (!items || items.length === 0) continue;
-
+  for (const group of CATALOG) {
     html += `<div class="category">
       <div class="category-header">
-        <span class="category-icon">${catIcons[cat] || '📦'}</span>
-        <span class="category-title">${cat}</span>
-        <span class="category-count">${items.length}</span>
+        <span class="category-icon">${group.icon}</span>
+        <span class="category-title">${group.category}</span>
       </div>`;
 
-    for (const item of items) {
-      const itemCommitments = allData.commitments.filter(c => c.item_id === item.id);
-      const totalBringing = itemCommitments.reduce((sum, c) => sum + (parseInt(c.quantity) || 1), 0);
-      const needed = item.needed_qty ? parseInt(item.needed_qty) : null;
-      const isCovered = needed ? totalBringing >= needed : itemCommitments.length > 0;
-      const isCustom = item.isCustom;
+    for (const item of group.items) {
+      const itemCommits = commitments.filter(c => c.catId === item.id);
+      const hasSomeone = itemCommits.length > 0;
 
-      html += `<div class="item-card ${isCovered ? 'covered' : ''}" id="card-${item.id}">
-        <div class="item-top">
-          <div style="flex:1">
-            <div class="item-name">${escHtml(item.name)}</div>
-            ${item.note ? `<div class="item-note">${escHtml(item.note)}</div>` : ''}
-          </div>
-          ${needed ? `<div class="item-needed">${totalBringing}/${needed}</div>` : ''}
-          ${!needed && isCustom && item.customQty ? `<div class="item-needed">qty: ${item.customQty}</div>` : ''}
-        </div>`;
+      html += `<div class="item-card ${hasSomeone ? 'covered' : ''}" id="card-${item.id}">
+        <div class="item-name">${esc(item.name)}</div>
+        ${item.note ? `<div class="item-note">${esc(item.note)}</div>` : ''}`;
 
-      // Show commitments
-      if (itemCommitments.length > 0) {
+      if (itemCommits.length > 0) {
         html += `<div class="commitments-list">`;
-        for (const c of itemCommitments) {
+        for (const c of itemCommits) {
           html += `<div class="commitment-pill">
-            ✓ ${escHtml(c.who_is_bringing)}
-            ${c.quantity && c.quantity > 1 ? `<span class="qty">× ${c.quantity}</span>` : ''}
+            ✓ ${esc(c.personName)}
+            ${c.note ? `<span style="opacity:0.8;font-weight:400"> — ${esc(c.note)}</span>` : ''}
+            <button class="remove-btn" onclick="removeCommit('${c.id}')" title="Remove">×</button>
           </div>`;
         }
         html += `</div>`;
       }
 
-      // Add button & form (not for custom items shown as top-level)
-      if (!isCustom) {
-        html += `<button class="add-btn" id="btn-${item.id}" onclick="openForm('${item.id}')">+ I'm bringing this</button>
-        <div class="commit-form" id="form-${item.id}" style="display:none">
-          <input type="text" id="name-${item.id}" placeholder="Your name (e.g. The Montgomerys)">
+      html += `<button class="add-btn" id="btn-${item.id}" onclick="openForm('${item.id}')">+ I'm bringing this</button>
+        <div class="commit-form" id="form-${item.id}">
+          <input type="text" id="name-${item.id}" placeholder="Your name (e.g. The Montgomerys)" autocomplete="off">
           <div class="form-row">
-            <input type="number" id="qty-${item.id}" placeholder="How many?" min="1" value="1">
-            <button class="submit-btn" onclick="submitCommitment('${item.id}')">✓ Commit</button>
+            <input type="text" id="note-${item.id}" placeholder="Note (optional — qty, brand, etc.)">
+            <button class="submit-btn" onclick="submitCommit('${item.id}')">✓ I've got it</button>
             <button class="cancel-btn" onclick="closeForm('${item.id}')">Cancel</button>
           </div>
-        </div>`;
-      }
-
-      html += `</div>`; // item-card
+        </div>
+      </div>`;
     }
 
-    html += `</div>`; // category
-  }
-
-  if (!html) {
-    html = `<div class="empty-state"><div class="icon">🌲</div><p>No items yet — add some below!</p></div>`;
+    html += `</div>`;
   }
 
   container.innerHTML = html;
+  renderCustomItems();
 }
 
-// ─── FORM CONTROLS ────────────────────────────────────────────
-function openForm(itemId) {
-  document.getElementById(`form-${itemId}`).style.display = 'flex';
-  document.getElementById(`btn-${itemId}`).style.display = 'none';
-  document.getElementById(`name-${itemId}`).focus();
+function renderCustomItems() {
+  const list = document.getElementById('custom-items-list');
+  if (customItems.length === 0) { list.innerHTML = ''; return; }
+  list.innerHTML = customItems.map(ci => `
+    <div class="custom-item-card">
+      <span class="custom-item-name">⭐ ${esc(ci.itemName)}</span>
+    </div>`).join('');
 }
 
-function closeForm(itemId) {
-  document.getElementById(`form-${itemId}`).style.display = 'none';
-  document.getElementById(`btn-${itemId}`).style.display = 'block';
+// ─── FORM ─────────────────────────────────────────────────────
+function openForm(id) {
+  document.getElementById(`form-${id}`).classList.add('open');
+  document.getElementById(`btn-${id}`).style.display = 'none';
+  document.getElementById(`name-${id}`).focus();
+}
+function closeForm(id) {
+  document.getElementById(`form-${id}`).classList.remove('open');
+  document.getElementById(`btn-${id}`).style.display = 'block';
 }
 
 // ─── SUBMIT COMMITMENT ────────────────────────────────────────
-async function submitCommitment(itemId) {
-  const name = document.getElementById(`name-${itemId}`).value.trim();
-  const qty = parseInt(document.getElementById(`qty-${itemId}`).value) || 1;
-
-  if (!name) {
+async function submitCommit(itemId) {
+  const personName = document.getElementById(`name-${itemId}`).value.trim();
+  const note = document.getElementById(`note-${itemId}`).value.trim();
+  if (!personName) {
     document.getElementById(`name-${itemId}`).style.borderColor = 'red';
     document.getElementById(`name-${itemId}`).focus();
     return;
   }
 
-  const submitBtn = document.querySelector(`#form-${itemId} .submit-btn`);
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Saving…';
-  setStatus('Saving your commitment…');
-  document.getElementById('status-bar').style.display = 'flex';
+  // Find item name from catalog
+  let itemName = '';
+  for (const g of CATALOG) {
+    const found = g.items.find(i => i.id === itemId);
+    if (found) { itemName = found.name; break; }
+  }
+
+  const btn = document.querySelector(`#form-${itemId} .submit-btn`);
+  btn.disabled = true; btn.textContent = 'Saving…';
+  setStatus('Saving…');
 
   try {
-    const res = await fetch(`${API_BASE}`, {
+    const res = await fetch('/.netlify/functions/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'addCommitment', itemId, name, quantity: qty })
+      body: JSON.stringify({ action: 'addCommit', catId: itemId, itemName, personName, note })
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `HTTP ${res.status}`);
-    }
-    setStatus(`✅ Thanks, ${name}! You're on the list.`, 'success');
-    await loadData();
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    commitments = data.commitments || [];
+    customItems = data.customItems || [];
+    render();
+    setStatus('', 'hidden');
   } catch (e) {
-    setStatus(`❌ Error: ${e.message}`, 'error');
-    submitBtn.disabled = false;
-    submitBtn.textContent = '✓ Commit';
+    setStatus(`❌ ${e.message}`, 'error');
+    btn.disabled = false; btn.textContent = '✓ I\'ve got it';
   }
 }
 
-// ─── SUBMIT CUSTOM ITEM ───────────────────────────────────────
+// ─── REMOVE COMMITMENT ────────────────────────────────────────
+async function removeCommit(commitId) {
+  if (!confirm('Remove your commitment?')) return;
+  setStatus('Removing…');
+  try {
+    const res = await fetch('/.netlify/functions/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'removeCommit', id: commitId })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    commitments = data.commitments || [];
+    customItems = data.customItems || [];
+    render();
+    setStatus('', 'hidden');
+  } catch (e) {
+    setStatus(`❌ ${e.message}`, 'error');
+  }
+}
+
+// ─── ADD CUSTOM ITEM ──────────────────────────────────────────
 async function submitCustom() {
   const itemName = document.getElementById('custom-item').value.trim();
   const who = document.getElementById('custom-name').value.trim();
-  const qty = parseInt(document.getElementById('custom-qty').value) || 1;
-
   if (!itemName || !who) {
     if (!itemName) document.getElementById('custom-item').style.borderColor = 'red';
     if (!who) document.getElementById('custom-name').style.borderColor = 'red';
     return;
   }
-
-  const btn = document.querySelector('#custom-form .submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Adding…';
-  setStatus('Adding your item…');
-  document.getElementById('status-bar').style.display = 'flex';
-
+  const btn = document.getElementById('custom-submit-btn');
+  btn.disabled = true; btn.textContent = 'Adding…';
+  setStatus('Adding…');
   try {
-    const res = await fetch(`${API_BASE}`, {
+    const res = await fetch('/.netlify/functions/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'addCustomItem', itemName, who, quantity: qty })
+      body: JSON.stringify({ action: 'addCustomItem', catId: 'custom', itemName: `${itemName} (${who})` })
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `HTTP ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    commitments = data.commitments || [];
+    customItems = data.customItems || [];
     document.getElementById('custom-item').value = '';
     document.getElementById('custom-name').value = '';
-    document.getElementById('custom-qty').value = '';
-    setStatus(`✅ "${itemName}" added!`, 'success');
-    await loadData();
+    render();
+    setStatus('', 'hidden');
   } catch (e) {
-    setStatus(`❌ Error: ${e.message}`, 'error');
+    setStatus(`❌ ${e.message}`, 'error');
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'Add to list';
+    btn.disabled = false; btn.textContent = 'Add to list';
   }
 }
 
-// ─── UTILS ────────────────────────────────────────────────────
-function escHtml(str) {
-  return String(str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ─── INIT ─────────────────────────────────────────────────────
 loadData();
 </script>
 </body>
