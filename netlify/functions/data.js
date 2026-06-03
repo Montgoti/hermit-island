@@ -60,7 +60,7 @@ exports.handler = async (event) => {
         getAllRecords(COMMITMENTS_TABLE),
         getAllRecords(CUSTOM_ITEMS_TABLE),
       ]);
-      const commitments = commitRecs.map(r => ({
+      const commitments = commitRecs.filter(r => r.fields.catId).map(r => ({
         id: r.id,
         catId: r.fields.catId || '',
         itemName: r.fields.itemName || '',
