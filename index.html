@@ -124,6 +124,10 @@
     <span id="status-text">Loading camp list…</span>
   </div>
 
+  <div style="text-align:right; margin-bottom:1rem;">
+    <button onclick="downloadPDF()" style="background:var(--forest);color:var(--sand);border:none;padding:0.55rem 1.25rem;border-radius:8px;font-size:0.9rem;font-family:'Source Sans 3',sans-serif;font-weight:600;cursor:pointer;">⬇ Download PDF</button>
+  </div>
+
   <div class="legend">
     <div class="legend-item"><div class="legend-dot covered"></div> Someone's bringing it</div>
     <div class="legend-item"><div class="legend-dot open"></div> Nobody yet</div>
@@ -614,6 +618,57 @@ async function submitCustom() {
 
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function downloadPDF() {
+  // Build a new window with clean print content
+  const win = window.open('', '_blank');
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Hermit Island 2026 — Packing List</title>
+  <style>
+    body { font-family: Georgia, serif; color: #2d4a2d; padding: 2rem; max-width: 750px; margin: 0 auto; }
+    h1 { font-size: 2rem; margin-bottom: 0.25rem; }
+    .subtitle { color: #777; font-size: 0.95rem; margin-bottom: 2rem; }
+    h2 { font-size: 1.2rem; color: #3d6b3d; border-bottom: 2px solid #e8ddd0; padding-bottom: 0.3rem; margin-top: 1.75rem; margin-bottom: 0.75rem; }
+    .item { padding: 0.35rem 0; border-bottom: 1px solid #f0ebe0; display: flex; flex-direction: column; }
+    .item-name { font-weight: bold; font-size: 0.95rem; }
+    .commits { margin-top: 0.2rem; font-size: 0.85rem; color: #555; }
+    .commit { display: inline-block; margin-right: 0.75rem; }
+    .commit-name { color: #6b8f4e; font-weight: 600; }
+    .no-commit { color: #bbb; font-style: italic; font-size: 0.82rem; }
+    @media print { body { padding: 1rem; } }
+  </style>
+  </head><body>
+  <h1>🏕️ Hermit Island 2026</h1>
+  <div class="subtitle">Packing & Coordination List — Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>`;
+
+  for (const group of CATALOG) {
+    html += `<h2>${group.icon} ${group.category}</h2>`;
+    for (const item of group.items) {
+      const itemCommits = commitments.filter(c => c.catId === item.id);
+      html += `<div class="item">
+        <div class="item-name">${esc(item.name)}</div>`;
+      if (itemCommits.length > 0) {
+        html += `<div class="commits">`;
+        for (const c of itemCommits) {
+          html += `<span class="commit">✓ <span class="commit-name">${esc(c.personName)}</span>`;
+          if (c.quantity) html += ` · ${esc(c.quantity)}`;
+          if (c.note) html += ` — ${esc(c.note)}`;
+          html += `</span>`;
+        }
+        html += `</div>`;
+      } else {
+        html += `<div class="no-commit">Nobody yet</div>`;
+      }
+      html += `</div>`;
+    }
+  }
+
+  html += `</body></html>`;
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 500);
 }
 
 loadData();
