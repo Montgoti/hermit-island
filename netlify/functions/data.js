@@ -66,6 +66,7 @@ exports.handler = async (event) => {
         itemName: r.fields.itemName || '',
         personName: r.fields.personName || '',
         note: r.fields.note || '',
+        quantity: r.fields.quantity || '',
       }));
       const customItems = customRecs.map(r => ({
         id: r.id,
@@ -85,6 +86,7 @@ exports.handler = async (event) => {
             itemName: body.itemName,
             personName: body.personName,
             note: body.note || '',
+            quantity: body.quantity || '',
           }}]
         });
         if (res.status !== 200) throw new Error('Airtable error: ' + JSON.stringify(res.body));
@@ -115,6 +117,7 @@ exports.handler = async (event) => {
         itemName: r.fields.itemName || '',
         personName: r.fields.personName || '',
         note: r.fields.note || '',
+        quantity: r.fields.quantity || '',
       }));
       const customItems = customRecs.map(r => ({
         id: r.id,
