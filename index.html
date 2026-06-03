@@ -260,6 +260,7 @@ function render() {
         for (const c of itemCommits) {
           html += `<div class="commitment-pill">
             ✓ ${esc(c.personName)}
+            ${c.quantity ? `<span style="opacity:0.8;font-weight:400"> · ${esc(c.quantity)}</span>` : ''}
             ${c.note ? `<span style="opacity:0.8;font-weight:400"> — ${esc(c.note)}</span>` : ''}
             <button class="remove-btn" onclick="removeCommit('${c.id}')" title="Remove">×</button>
           </div>`;
@@ -271,7 +272,8 @@ function render() {
         <div class="commit-form" id="form-${item.id}">
           <input type="text" id="name-${item.id}" placeholder="Your name (e.g. The Montgomerys)" autocomplete="off">
           <div class="form-row">
-            <input type="text" id="note-${item.id}" placeholder="Note (optional — qty, brand, etc.)">
+            <input type="text" id="quantity-${item.id}" placeholder="Quantity (e.g. 2 dozen, 1 case)">
+            <input type="text" id="note-${item.id}" placeholder="Note (optional — brand, etc.)">
             <button class="submit-btn" onclick="submitCommit('${item.id}')">✓ I've got it</button>
             <button class="cancel-btn" onclick="closeForm('${item.id}')">Cancel</button>
           </div>
@@ -309,6 +311,7 @@ function closeForm(id) {
 // ─── SUBMIT COMMITMENT ────────────────────────────────────────
 async function submitCommit(itemId) {
   const personName = document.getElementById(`name-${itemId}`).value.trim();
+  const quantity = document.getElementById(`quantity-${itemId}`).value.trim();
   const note = document.getElementById(`note-${itemId}`).value.trim();
   if (!personName) {
     document.getElementById(`name-${itemId}`).style.borderColor = 'red';
@@ -331,7 +334,7 @@ async function submitCommit(itemId) {
     const res = await fetch('/.netlify/functions/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'addCommit', catId: itemId, itemName, personName, note })
+      body: JSON.stringify({ action: 'addCommit', catId: itemId, itemName, personName, note, quantity })
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
