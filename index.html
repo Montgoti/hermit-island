@@ -108,6 +108,19 @@
   .custom-item-card { background: white; border: 1.5px solid var(--smoke); border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem; }
   .custom-item-name { font-weight: 600; flex: 1; }
   .custom-item-who { font-size: 0.85rem; color: var(--moss); }
+
+  /* ─── Sharable filter toggle ─── */
+  .filter-bar { display: flex; justify-content: center; gap: 0; margin-bottom: 1.25rem; }
+  .filter-btn {
+    font-family: 'Source Sans 3', sans-serif; font-size: 0.92rem; font-weight: 600;
+    padding: 0.55rem 1.4rem; cursor: pointer; border: 1.5px solid var(--pine);
+    background: white; color: var(--pine); transition: background 0.15s, color 0.15s;
+  }
+  .filter-btn:first-child { border-radius: 8px 0 0 8px; border-right: none; }
+  .filter-btn:last-child { border-radius: 0 8px 8px 0; }
+  .filter-btn.active { background: var(--pine); color: var(--sand); }
+  .filter-hint { text-align: center; font-size: 0.85rem; color: var(--pine); margin: -0.75rem 0 1.25rem; font-style: italic; }
+  .shared-badge { display: inline-block; font-size: 0.72rem; font-weight: 600; color: var(--pine); background: var(--smoke); border-radius: 6px; padding: 0.1rem 0.45rem; margin-left: 0.5rem; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -133,6 +146,12 @@
   <div style="text-align:right; margin-bottom:1rem;">
     <button onclick="downloadPDF()" style="background:var(--forest);color:var(--sand);border:none;padding:0.55rem 1.25rem;border-radius:8px;font-size:0.9rem;font-family:'Source Sans 3',sans-serif;font-weight:600;cursor:pointer;">⬇ Download PDF</button>
   </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" id="filter-all" onclick="setFilter(false)">All items</button>
+    <button class="filter-btn" id="filter-shared" onclick="setFilter(true)">🤝 Sharable items</button>
+  </div>
+  <div class="filter-hint" id="filter-hint" style="display:none">Showing only items we can share across campsites — one is enough for everyone!</div>
 
   <div class="legend">
     <div class="legend-item"><div class="legend-dot covered"></div> Someone's bringing it</div>
@@ -426,9 +445,45 @@ const CATALOG = [
   },
 ];
 
+// ─── SHARABLE ITEMS (from HERMIT_Shared_Items_2026.xlsx) ─────
+// Items the whole group can share — one/few needed for everyone.
+const SHARED_IDS = new Set([
+  'shelter-5',  // Tarps and rope(s)
+  'shelter-6',  // Four step aluminum ladder
+  'shelter-7',  // Rubber mallet
+  'cook-2',     // Lobster/cooking pots
+  'cook-28',    // Marshmallow sticks/forks
+  'fish-1',     // Poles
+  'fish-2',     // Tackle box
+  'fish-4',     // Fish net
+  'fish-7',     // Filet knife set
+  'fish-8',     // Beach rod holders
+  'misc-2',     // Poker set
+  'misc-6',     // Volleyball, Frisbee, kite & string
+  'misc-14',    // Cards
+  'health-2',   // First aid kit
+  'bfast-1',    // Eggs
+  'bfast-9',    // Potatoes (breakfast)
+  'bfast-11',   // Syrup
+  'bfast-14',   // Spices
+  'lunch-5',    // Hellman's Mayo (NO Miracle Whip!)
+  'dinner-6',   // Ketchup
+  'dinner-7',   // Mustard
+  'dinner-10',  // Potatoes (dinner)
+]);
+
 // ─── STATE ────────────────────────────────────────────────────
 let commitments = [];   // [{ id, catId, itemName, personName, note }]
 let customItems = [];   // [{ id, catId, itemName }]
+let showSharedOnly = false;
+
+function setFilter(sharedOnly) {
+  showSharedOnly = sharedOnly;
+  document.getElementById('filter-all').classList.toggle('active', !sharedOnly);
+  document.getElementById('filter-shared').classList.toggle('active', sharedOnly);
+  document.getElementById('filter-hint').style.display = sharedOnly ? 'block' : 'none';
+  render();
+}
 
 // ─── STATUS ───────────────────────────────────────────────────
 function setStatus(msg, type = '') {
@@ -461,18 +516,24 @@ function render() {
   let html = '';
 
   for (const group of CATALOG) {
+    const visibleItems = showSharedOnly
+      ? group.items.filter(i => SHARED_IDS.has(i.id))
+      : group.items;
+    if (visibleItems.length === 0) continue;  // hide empty categories in filtered view
+
     html += `<div class="category">
       <div class="category-header">
         <span class="category-icon">${group.icon}</span>
         <span class="category-title">${group.category}</span>
       </div>`;
 
-    for (const item of group.items) {
+    for (const item of visibleItems) {
       const itemCommits = commitments.filter(c => c.catId === item.id);
       const hasSomeone = itemCommits.length > 0;
+      const sharedBadge = SHARED_IDS.has(item.id) ? `<span class="shared-badge">🤝 Sharable</span>` : '';
 
       html += `<div class="item-card ${hasSomeone ? 'covered' : ''}" id="card-${item.id}">
-        <div class="item-name">${esc(item.name)}</div>
+        <div class="item-name">${esc(item.name)}${sharedBadge}</div>
         ${item.note ? `<div class="item-note">${esc(item.note)}</div>` : ''}`;
 
       if (itemCommits.length > 0) {
